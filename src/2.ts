@@ -1,14 +1,10 @@
-import { promises as fs } from 'fs';
-
 const INPUT_LOCATION = './src/2.txt';
-const DATA_FORMAT = 'utf-8';
 const ROW_DELIMITER = '\n';
 const COLUMN_DELIMITER = ' ';
 
 const checkSafety = (report: number[]): number => {
   // create a shift register, looks at chunks [ a b c ]
   for(let i = 2; i < report.length; i++) {
-    let safe = true;
     const a: number = report[i-2];
     const b: number = report[i-1];
     const c: number = report[i];
@@ -28,16 +24,12 @@ const checkSafety = (report: number[]): number => {
   return 1;
 };
 
-const main = async () => {
-  const fileContent = (await fs.readFile(INPUT_LOCATION, DATA_FORMAT)).toString();
-  const input = fileContent.split(ROW_DELIMITER);
+const fileContent = await Deno.readTextFile(INPUT_LOCATION);
+const input = fileContent.split(ROW_DELIMITER);
 
-  let safeCount = 0;
-  for(let i = 0; i < input.length; i++) {
-    const reportData = input[i].split(COLUMN_DELIMITER).map(col => Number(col));
-    safeCount += checkSafety(reportData);
-  }
-  console.log({safeCount});
-};
-
-main();
+let safeCount = 0;
+for(let i = 0; i < input.length; i++) {
+  const reportData = input[i].split(COLUMN_DELIMITER).map(col => Number(col));
+  safeCount += checkSafety(reportData);
+}
+console.log({safeCount});

@@ -19,7 +19,7 @@ npm i
 Example for day 1:
 
 ```bash
-ts-node src/1.ts
+deno run --allow-read src/1.ts
 ```
 
 Solutions:
