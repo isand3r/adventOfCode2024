@@ -1,9 +1,9 @@
-const INPUT_LOCATION = './src/2.txt';
-const ROW_DELIMITER = '\n';
-const COLUMN_DELIMITER = ' ';
+const fileContent = await Deno.readTextFile('./src/2.txt');
+const input = fileContent
+  .split('\n')
+  .map(s => s.split(' ').map(n => Number(n)));
 
-const checkSafety = (report: number[]): number => {
-  // create a shift register, looks at chunks [ a b c ]
+const isSafe = (report: number[]): 1 | 0 => {
   for(let i = 2; i < report.length; i++) {
     const a: number = report[i-2];
     const b: number = report[i-1];
@@ -24,12 +24,23 @@ const checkSafety = (report: number[]): number => {
   return 1;
 };
 
-const fileContent = await Deno.readTextFile(INPUT_LOCATION);
-const input = fileContent.split(ROW_DELIMITER);
-
-let safeCount = 0;
-for(let i = 0; i < input.length; i++) {
-  const reportData = input[i].split(COLUMN_DELIMITER).map(col => Number(col));
-  safeCount += checkSafety(reportData);
-}
+// part 1
+const safeCount = input.reduce((acc, row) => {
+  return acc + isSafe(row);
+}, 0)
 console.log({safeCount});
+
+// part 2
+// brute force - if not safe, try every variation of the report
+// with one number removed until it is
+const delimitedSafeCount = input.reduce((acc, row) => {
+  const safe = isSafe(row);
+  if(!safe) {
+    for(let i = 0; i < row.length; i++) {
+      if(isSafe(row.toSpliced(i, 1)) === 1) return acc + 1;
+    }
+    return acc;
+  }
+  return acc + safe;
+}, 0);
+console.log({delimitedSafeCount});
